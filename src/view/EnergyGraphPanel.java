@@ -9,8 +9,11 @@ public class EnergyGraphPanel extends JPanel {
     private String[] labels = {"Light", "AC", "Fridge"};
 
     public EnergyGraphPanel() {
-        setBackground(new Color(210, 255, 220));
-        setBorder(BorderFactory.createTitledBorder("Energy Usage Graph"));
+        setBackground(new Color(240, 249, 255));
+        setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(37, 99, 235), 2),
+                "Live Energy Usage Graph"
+        ));
     }
 
     public void updateUsage(double light, double ac, double fridge) {
@@ -26,24 +29,36 @@ public class EnergyGraphPanel extends JPanel {
 
         Graphics2D g2 = (Graphics2D) g;
         g2.setFont(new Font("Arial", Font.BOLD, 13));
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         int x = 35;
         int yBase = getHeight() - 45;
-        int barWidth = 45;
+        int barWidth = 46;
         int maxBarHeight = 150;
         double maxUsage = 15.0;
+
+        Color[] colors = {
+                new Color(37, 99, 235),
+                new Color(14, 165, 233),
+                new Color(34, 197, 94)
+        };
 
         for (int i = 0; i < usageData.length; i++) {
             int barHeight = (int) ((usageData[i] / maxUsage) * maxBarHeight);
 
-            g2.setColor(new Color(0, 255, 120));
-            g2.fillRoundRect(x, yBase - barHeight, barWidth, barHeight, 12, 12);
+            GradientPaint gradient = new GradientPaint(
+                    x, yBase - barHeight, colors[i],
+                    x, yBase, colors[i].brighter()
+            );
 
-            g2.setColor(Color.BLACK);
-            g2.drawString(labels[i], x, yBase + 20);
-            g2.drawString(usageData[i] + " kWh", x - 5, yBase - barHeight - 8);
+            g2.setPaint(gradient);
+            g2.fillRoundRect(x, yBase - barHeight, barWidth, barHeight, 15, 15);
 
-            x += 70;
+            g2.setColor(new Color(15, 23, 42));
+            g2.drawString(usageData[i] + " kWh", x - 5, yBase - barHeight - 10);
+            g2.drawString(labels[i], x + 2, yBase + 22);
+
+            x += 72;
         }
     }
 }
